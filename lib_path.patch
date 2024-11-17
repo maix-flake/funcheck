@@ -1,0 +1,39 @@
+diff --git a/host/srcs/run/runner.c b/host/srcs/run/runner.c
+index 0783ec5..61e9b12 100644
+--- a/host/srcs/run/runner.c
++++ b/host/srcs/run/runner.c
+@@ -40,26 +40,7 @@
+  */
+ static char *get_library_path(void)
+ {
+-    static char path[1024];
+-    if (path[0] != '\0')
+-        return path;
+-    char *exec_path = realpath("/proc/self/exe", NULL);
+-    if (exec_path == NULL)
+-        log_fatal("Could not find the executable path", true);
+-    // remove the executable name
+-    char *last_slash = strrchr(exec_path, '/');
+-    if (last_slash == NULL)
+-        log_fatal("Could not find the executable path", true);
+-    *last_slash = '\0';
+-    // add the library path
+-    snprintf(path, sizeof(path), "%s/%s", exec_path, RELATIVE_LIBRARY_PATH);
+-    free(exec_path);
+-    char *real_path = realpath(path, NULL);
+-    if (real_path == NULL)
+-        log_fatal("Could not find the library path", true);
+-    strncpy(path, real_path, sizeof(path));
+-    free(real_path);
+-    return path;
++	return RELATIVE_LIBRARY_PATH;
+ }
+ 
+ /**
+@@ -166,4 +147,4 @@ int run(t_run_info *run_info)
+ 		}
+ 	}
+ 	return pid;
+-}
+\ No newline at end of file
++}
