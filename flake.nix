@@ -19,9 +19,9 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
         llvm = pkgs.llvm_18;
-        funcheck_drv = pkgs.stdenv.mkDerivation {
+        funcheck_drv = pkgs.stdenv.mkDerivation (final: {
           pname = "funcheck";
-          version = "1.0";
+          version = "1.1.4";
           src = "${funcheck}";
           patches = [./lib_path.patch];
           nativeBuildInputs = [pkgs.makeWrapper pkgs.minilibx pkgs.gnumake pkgs.xorg.libX11];
@@ -33,9 +33,9 @@
             # TODO: remove this when I take time to check wtf is happening
 
             echo "" >library/srcs/hook/functions/stdio.c
-            export CFLAGS="-Werror -Wextra -Wall -Wno-stringop-truncation -Wno-attributes -Wno-array-parameter -Wno-unused-result -g -fPIC -fvisibility=hidden"
-            make -C library "CC=$CC" "CFLAGS=$CFLAGS"
-            make -C host    "CC=$CC" "CFLAGS=$CFLAGS"
+            export CFLAGS="-Werror -Wextra -Wall -Wno-stringop-truncation -Wno-attributes -Wno-array-parameter -Wno-unused-result -g -fPIC -fvisibility=hidden "
+            make -C library "CC=$CC" "CFLAGS=$CFLAGS" "VERSION=${final.version}-nix"
+            make -C host    "CC=$CC" "CFLAGS=$CFLAGS" "VERSION=${final.version}-nix"
           '';
           installPhase = ''
             mkdir -p "$out/bin"
@@ -45,7 +45,7 @@
             wrapProgram $out/bin/funcheck \
               --prefix PATH : ${pkgs.lib.makeBinPath [llvm]}
           '';
-        };
+        });
       in {
         packages = rec {
           funcheck = default;
